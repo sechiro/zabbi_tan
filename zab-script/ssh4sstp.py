@@ -31,7 +31,7 @@ def main():
         cmd = argvs[0]
         argv_data = datafile.readline()    
             
-    f = open(homedir + "\conf\servers")
+    f = open(homedir + "\conf\hostsetting.dat")
     line = f.readline()
     while line:
         if re.match("#", line ):
@@ -45,13 +45,13 @@ def main():
     print params
     message = ""
     
-    for hostname,port,username,key_filename in params:
+    for hostname,ip,port,username,key_filename in params:
         port = int(port)
         conn = None
         try:
             conn = p.SSHClient()
             conn.set_missing_host_key_policy(p.AutoAddPolicy())
-            conn.connect(hostname,port=port,username=username,key_filename=key_filename)
+            conn.connect(hostname=ip,port=port,username=username,key_filename=key_filename)
             i,o,e = conn.exec_command(cmd)
             i.flush()
             data = o.read()#.splitlines()
