@@ -1,0 +1,4 @@
+charset,Shift_JIS
+type,ghost
+name,‚´‚Ñ‚½‚ñ
+directory,zabbi_tan

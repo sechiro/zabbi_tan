@@ -1,0 +1,4 @@
+charset, Shift_JIS
+type,shell
+name,‚´‚Ñ‚½‚ñver.COLORS
+directory,zabbitan_colors

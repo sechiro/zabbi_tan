@@ -1,0 +1,6 @@
+surface0-1500
+{
+	collision0,87,52,210,118,Head
+	collision0,100,169,203,258,Chest
+	collision0,68,330,228,399,Absolute
+}
