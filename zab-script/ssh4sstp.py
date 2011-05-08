@@ -10,7 +10,7 @@ def main():
     message = ''
     argvs = []
     params = []    
-    cmd = "uptime"
+    cmd = "uptime"  # 対象コマンドが見つからなかったら、とりあえずuptime
     homedir = os.path.dirname(os.path.abspath(__file__))
     
     # Ensure variable is defined
@@ -42,27 +42,62 @@ def main():
         params.append(line.split(","))
         line = f.readline()
 
-    print params
-    message = ""
-    
-    for hostname,ip,port,username,key_filename in params:
+    #print params
+    message = log = ''
+    log_file = '\log\ssh4sstp.log'
+    try:
+        log_f = open(homedir + log_file, 'ab')
+    except:
+        message += ur'ログファイルが開けないわ。\e'
+        ghost_name = u'ざびたん'
+        request = sstp_send_request(message, ghost_name)
+        send_sstp(request)
+        exit()
+
+    print 'Now Executing...'
+    log += '========================================\n' + \
+            'Executed Command: ' + cmd + \
+            '\n========================================\n'
+
+     
+    for hostname,ip,port,username,password,key_filename in params:
         port = int(port)
         conn = None
         try:
             conn = p.SSHClient()
             conn.set_missing_host_key_policy(p.AutoAddPolicy())
-            conn.connect(hostname=ip,port=port,username=username,key_filename=key_filename)
-            i,o,e = conn.exec_command(cmd)
-            i.flush()
-            data = o.read()#.splitlines()
-            #print "%s   %s" % ( hostname, o.read().strip() )
-            message += hostname + ": "
-            message += data.decode("utf-8")
-            message += ur'\n'
+            try:
+                conn.connect(hostname=ip,port=port,username=username,key_filename=key_filename)
+                login = 'Login with keyfile'
+            except:
+                conn.connect(hostname=ip,port=port,username=username,password=password)
+                login = 'Login with password'
 
+            i,o,e = conn.exec_command(cmd)
+
+            if re.match('sudo ', cmd) and ( password != '' ):
+                i.write( (password + '\n') )
+                i.flush()
+                print 'sudo with password'
+                data = e.read()#.splitlines()
+                print data
+            
+            data = o.read()#.splitlines
+            message += hostname + ':\\n'
+            log += hostname + '(' + login + ')\n'
+            message += ( re.sub(r'\n', r'\\n', data ) ).decode('utf-8')
+            log += data.decode('utf-8')
+            message += r'\n'
+            log += '\n'
+            #print message
+            
         finally:
             if conn: conn.close()
+            
+    log_f.write(log.encode('utf-8'))
+    message += ur'実行ログは \f[underline,true]\q[ログファイル,ViewSSHLog]\f[underline,false]を見てね♪\n(' + re.sub(r'\\', r'\\\\', (homedir + log_file) ) + ')'
 
+    #print message
     message += ur'\e'
     ghost_name = u'ざびたん'
     request = sstp_send_request(message, ghost_name)

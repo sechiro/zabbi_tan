@@ -351,7 +351,6 @@ MouseDoubleClick_0Absolute
 MouseDoubleClick_0
 {
 	OpenMenu
-	//"\![open,file,zab-script\get_niconico_cert.pl]\e"
 }
 
 //メニューを開く、\qの第2引数の名前の関数がOnChoiceSelectのEVALで実行される。
@@ -363,6 +362,7 @@ OpenMenu
 	○\q[時間を知りたい,MenuDate]\n/
 	○\q[サーバの起動時間を知りたい,MenuUptime]\n/
 	○\q[実行コマンドを指定する,MenuUserInput]\n/
+	◯\q[ニコニコ動画のSSL証明書期限を知りたい,MenuGetNico]\n/
 	○\q[サーバ追加,addServer]\n/
 	○\q[サーバ削除,delServer]\n/
 	"
@@ -372,60 +372,71 @@ OpenMenu
 //サーバ設定関連
 addServer
 {
-	"サーバのホスト名を入力してください。（Zabbixサーバ上のホスト名と同じものにすること）"
+	"サーバのホスト名を入力してください。\n（Zabbixサーバ上のホスト名と同じものにすること）"
 	--
 	"\![open,inputbox,setHostname,180000,サーバの設定ホスト名を入力してください。]"
 }
 
 setHostname
 {
-	"ホスト名は、%(_argv[0])です。" 
+	"ホスト名は、%(_argv[0])です。\n" 
 	--
 	host_name = _argv[0]
 	hostsetting = _argv[0]
 	--
-	"サーバのIPアドレスを入力してください。"
+	"続いて、サーバのIPアドレスを入力してください。"
 	--
 	"\![open,inputbox,setIP,180000,ここにサーバのIPアドレスを入力してください。]"
 }
 
 setIP
 {
-	"IPアドレスは、%(_argv[0])です。" 
+	"IPアドレスは、%(_argv[0])です。\n" 
 	--
 	hostsetting = hostsetting + "," + _argv[0]
 	--
-	"SSHの接続先ポート番号を入力してください。"
+	"続いて、SSHの接続先ポート番号を入力してください。"
 	--
 	"\![open,inputbox,setPort,180000,22]"
 }
 
 setPort
 {
-	"接続先ポートは、%(_argv[0])です。" 
+	"接続先ポートは、%(_argv[0])です。\n" 
 	--
 	hostsetting = hostsetting + "," + _argv[0]
 	--
-	"ログインユーザ名を入力してください。"
+	"続いて、ログインユーザ名を入力してください。"
 	--
 	"\![open,inputbox,setUsername,180000,ここにユーザ名を入力してください。]"
 }
 
 setUsername
 {
-	"ユーザ名は、%(_argv[0])です。" 
+	"ユーザ名は、%(_argv[0])です。\n" 
 	--
 	hostsetting = hostsetting + "," + _argv[0]
 	--
-	"サーバにログインするための秘密鍵をファイル名をフルパスで入力してください。"
+	"続いて、パスワードを入力してください。"
 	--
-	"\![open,inputbox,setPKey,180000,ここに秘密鍵をファイル名をフルパスで入力してください。]"
+	"\![open,inputbox,setPassword,180000,ここにパスワードを入力してください。]"
+}
+
+setPassword
+{
+	"パスワードは、%(_argv[0])です。\n" 
+	--
+	hostsetting = hostsetting + "," + _argv[0]
+	--
+	"続いて、サーバにログインするための秘密鍵をファイル名をフルパスで入力してください。\n（秘密鍵がなくてもパスワードログインで使用できますが、セキュリティの観点からRSA鍵の使用を推奨します。）"
+	--
+	"\![open,inputbox,setPKey,180000,ここに秘密鍵をファイル名をフルパスで入力してください。使用しない場合は空欄としてください。]"
 }
 
 setPKey
 {
 	_keyfile = escapeYen(_argv[0])
-	"秘密鍵のファイルは、%(_keyfile)です。" 
+	"秘密鍵のファイルは、%(_keyfile)です。\n" 
 	--
 	hostsetting = hostsetting + "," + _argv[0]
 	--
@@ -469,6 +480,16 @@ MenuUserInput{
 	"実行したいコマンドを入力してね。"
 	--
 	"\![open,inputbox,InputCommand,180000,ここに実行したいコマンドを入力してください。]"
+}
+
+//ニコニコ動画のSSL証明書期限
+MenuGetNico{
+	"\![open,file,zab-script\get_nicovideo_cert.py]\e"
+}
+
+//スクリプトログファイルを見る
+ViewSSHLog{
+	"\![open,file,zab-script\log\ssh4sstp.log]\e"
 }
 
 //スクリプト実行本体（これに引数として実行コマンドを渡す）
@@ -568,7 +589,6 @@ OnMouseMove
 MouseReaction_0Head
 {
 	RandomTalk
-	//"\1\s[10]\0\s[0]Apacheを再起動するわよ。\n\![open,file,zab-script\paramico-sample2.py]\e"
 }
 
 MouseReaction_0Chest

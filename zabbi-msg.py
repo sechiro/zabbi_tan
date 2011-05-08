@@ -10,13 +10,6 @@ def main():
     trigger = sys.argv[1] # {HOSTNAME}:{TRIGGER.NAME}:{TRIGGER.SEVERITY}:{TRIGGER.VALUE}
     trigger_keys = trigger.split(':')
     
-    # 自分用のトリガー除外設定
-    if re.match('Fedora', trigger_keys[0]):
-        exit()
-
-    if re.match('Think', trigger_keys[0]):
-        exit()
-    
     # kana or kayo
     if re.match('kana', trigger_keys[0]):
         # Error or Restored
