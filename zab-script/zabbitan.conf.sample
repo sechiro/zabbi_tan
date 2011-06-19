@@ -1,8 +1,0 @@
-# Zabbix Server の IPアドレス、APIアクセス時のユーザアカウント
-zabbix_server = 192.168.11.201
-zabbix_api_user = Admin
-zabbix_api_password = zabbix
-
-# 以下に書かれている名前がホスト名に入っている場合は、
-# アラートが上がっても無視する。
-exclude_hosts = Fedora,Think

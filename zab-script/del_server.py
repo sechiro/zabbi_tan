@@ -11,7 +11,7 @@ def main():
     params = []    
     homedir = os.path.dirname(os.path.abspath(__file__))
     
-    datafile = open(homedir + "\zabbitan.dat")
+    datafile = open(homedir + "\conf\zabbitan.dat")
     argv_data = datafile.readline()
     while argv_data:
         if re.match("#", argv_data):
@@ -23,7 +23,7 @@ def main():
         targethost = argvs[0]
         argv_data = datafile.readline()    
             
-    f = open(homedir + "\hostsetting.dat" , "r")
+    f = open(homedir + "\conf\hostsetting.dat" , "r")
     line = f.readline()
     
     while line: 
@@ -34,8 +34,7 @@ def main():
     print params
     f.close
 
-    f = open(homedir + "\hostsetting.dat" , "w")
-    g = open(homedir + "\hosts.dat" , "w")
+    f = open(homedir + "\conf\hostsetting.dat" , "w")
     message = ""
     hostsettings = []
        
@@ -48,10 +47,8 @@ def main():
             setting += "\n"
             hostname = hostsettings[0] + "\n"
             f.write(setting)
-            g.write(hostsettings[0])
    
     f.close
-    g.close
     
    
 

@@ -8,7 +8,11 @@ def main():
     message = ''
     
     trigger = sys.argv[1] # {HOSTNAME}:{TRIGGER.NAME}:{TRIGGER.SEVERITY}:{TRIGGER.VALUE}
-    trigger_keys = trigger.split(':')
+    trigger_keys = trigger.split(':', 4)
+
+    #print trigger_keys[4].decode('utf-8')
+    trigger_keys[4] = trigger_keys[4].decode('shift-jis')
+    #print trigger_keys[4]
     
     # kana or kayo
     if re.match('kana', trigger_keys[0]):

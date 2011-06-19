@@ -359,12 +359,12 @@ OpenMenu
 	"\0\s[0]何か用かしら？\n"
 	--
 	"/
-	○\q[時間を知りたい,MenuDate]\n/
-	○\q[サーバの起動時間を知りたい,MenuUptime]\n/
-	○\q[実行コマンドを指定する,MenuUserInput]\n/
-	◯\q[ニコニコ動画のSSL証明書期限を知りたい,MenuGetNico]\n/
-	○\q[サーバ追加,addServer]\n/
-	○\q[サーバ削除,delServer]\n/
+	○\q[みんなの時間を知りたい,MenuDate]\n/
+	○\q[みんなの起動時間を知りたい,MenuUptime]\n/
+	○\q[みんなにお願い,MenuUserInput]\n/
+	//◯\q[ニコニコ動画のSSL証明書期限を知りたい,MenuGetNico]\n/
+	○\q[お友達（サーバ）追加,addServer]\n/
+	○\q[お友達とお別れする,delServer]\n/
 	"
 }
 
@@ -417,7 +417,7 @@ setUsername
 	--
 	hostsetting = hostsetting + "," + _argv[0]
 	--
-	"続いて、パスワードを入力してください。"
+	"続いて、パスワードを入力してください。\n（パスワードの暗号化保存は行いません。ご了承ください。）"
 	--
 	"\![open,inputbox,setPassword,180000,ここにパスワードを入力してください。]"
 }
@@ -428,7 +428,7 @@ setPassword
 	--
 	hostsetting = hostsetting + "," + _argv[0]
 	--
-	"続いて、サーバにログインするための秘密鍵をファイル名をフルパスで入力してください。\n（秘密鍵がなくてもパスワードログインで使用できますが、セキュリティの観点からRSA鍵の使用を推奨します。）"
+	"続いて、サーバにログインするための秘密鍵をファイル名をフルパスで入力してください。\n（秘密鍵がなくてもパスワードログインで使用できますが、セキュリティの観点から公開鍵認証を推奨します。）"
 	--
 	"\![open,inputbox,setPKey,180000,ここに秘密鍵をファイル名をフルパスで入力してください。使用しない場合は空欄としてください。]"
 }
@@ -447,12 +447,6 @@ setPKey
 	FWRITE("..\..\zab-script\conf\hostsetting.dat",hostsetting)
 	FCLOSE("..\..\zab-script\conf\hostsetting.dat")
 	
-	_result = FOPEN("..\..\zab-script\conf\hosts.dat","a")
-	if _result == 0 {
-		"ファイルオープンに失敗しました\e"
-	}
-	FWRITE("..\..\zab-script\conf\hosts.dat",host_name)
-	FCLOSE("..\..\zab-script\conf\hosts.dat")
 	host_name = ""
 	hostsetting = ""
 	--
@@ -508,20 +502,26 @@ ExecScript
 //メニューからサーバ削除
 delServer
 {
-	_result = FOPEN("..\..\zab-script\conf\hosts.dat","r")
+	_result = FOPEN("..\..\zab-script\conf\hostsetting.dat","r")
 	if _result == 0 {
 		"ファイルオープンに失敗しました\e"
 	}
-	_host_name = FREAD("..\..\zab-script\conf\hosts.dat")
 	hostmenu = "どのサーバを削除しますか？\n"
+	_host_name = FREAD("..\..\zab-script\conf\hostsetting.dat")
 	while _host_name != -1
 	{
-		hostmenu = hostmenu + "○\q[%(_host_name),OnChoiceSelectEx,ExecDelScript,%(_host_name)]\n"
-		_host_name = FREAD("..\..\zab-script\conf\hosts.dat")
+		_array = SPLIT("%(_host_name)",",")
+		hostmenu = hostmenu + "○\q[%(_array[0]),OnChoiceSelectEx,ExecDelScript,%(_array[0])]\n"
+		_host_name = FREAD("..\..\zab-script\conf\hostsetting.dat")
 	}
-	FCLOSE("..\..\zab-script\conf\hosts.dat")
+	FCLOSE("..\..\zab-script\conf\hostsetting.dat")
 	--
 	hostmenu
+}
+
+//デバッグ用関数
+debugFunc
+{
 }
 
 ExecDelScript
